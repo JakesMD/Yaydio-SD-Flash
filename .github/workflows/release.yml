@@ -64,22 +64,23 @@ jobs:
         run: |
           if [ "${{ matrix.os }}" = "windows-latest" ]; then
             cd build/windows/x64/runner/Release/
-            7z a -r ../../../../../windows-app.zip .
+            7z a -r $GITHUB_WORKSPACE/windows-app.zip .
           elif [ "${{ matrix.os }}" = "macos-latest" ]; then
             cd build/macos/Build/Products/Release/
-            zip -ry ../../../../macos-app.zip *.app
+            zip -ry $GITHUB_WORKSPACE/macos-app.zip *.app
           else
             cd build/linux/x64/release/bundle/
-            tar -czvf ../../../../../linux-app.tar.gz .
+            tar -czvf $GITHUB_WORKSPACE/linux-app.tar.gz .
           fi
 
-      - name: Upload prepared zip/tar
+      - name: Upload prepared package
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-package
           path: |
-            *.zip
-            *.tar.gz
+            $GITHUB_WORKSPACE/windows-app.zip
+            $GITHUB_WORKSPACE/linux-app.tar.gz
+            $GITHUB_WORKSPACE/macos-app.zip
           if-no-files-found: error
 
   release:
