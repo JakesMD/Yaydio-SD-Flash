@@ -59,12 +59,12 @@ jobs:
           fi
         shell: bash
 
-      - name: Prepare Package
+      - name: Prepare package
         shell: bash
         run: |
           if [ "${{ matrix.os }}" = "windows-latest" ]; then
             cd build/windows/x64/runner/Release/
-            zip -r ../../../../../windows-app.zip .
+            7z a -r ../../../../../windows-app.zip .
           elif [ "${{ matrix.os }}" = "macos-latest" ]; then
             cd build/macos/Build/Products/Release/
             zip -ry ../../../../macos-app.zip *.app
@@ -73,14 +73,17 @@ jobs:
             tar -czvf ../../../../../linux-app.tar.gz .
           fi
 
-      - name: Upload Prepared Zip/Tar
+      - name: Upload prepared zip/tar
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}-package
-          path: ./*.zip, ./*.tar.gz
+          path: |
+            *.zip
+            *.tar.gz
+          if-no-files-found: error
 
   release:
-    name: Create Release
+    name: Create release
     needs: [ get_version, build ]
     runs-on: ubuntu-latest
     permissions:
@@ -91,7 +94,7 @@ jobs:
         with:
           merge-multiple: true
 
-      - name: Create or Update Release
+      - name: Create or update release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ needs.get_version.outputs.version }}
