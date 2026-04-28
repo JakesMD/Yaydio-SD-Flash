@@ -34,9 +34,13 @@ which causes albums to play out of sequence.
 Downloads for all platforms are available on the
 [Releases](https://github.com/JakesMD/Yaydio-SD-Flash/releases) page.
 
-As the app is currently unsigned on macOS, you may need to **Right-Click >
-Open** or go to **System Settings > Privacy & Security** to allow the
-application to run.
+As the app is currently unsigned on macOS, you will need to
+
+- Open the app
+- Close the privacy popup
+- Go to **System Settings > Privacy & Security** and scroll down
+- Next to "Yadio SD Flash was blocked to protect your Mac." click **Open
+  Anyway**.
 
 ## 🤝 Contributing
 
