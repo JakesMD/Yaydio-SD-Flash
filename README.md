@@ -34,11 +34,9 @@ which causes albums to play out of sequence.
 Downloads for all platforms are available on the
 [Releases](https://github.com/JakesMD/Yaydio-SD-Flash/releases) page.
 
-- **Windows:** Available as `.exe`.
-- **macOS:** Available as `.app`. As the app is currently unsigned, you may need
-  to **Right-Click > Open** or go to **System Settings > Privacy & Security** to
-  allow the application to run.
-- **Linux:** Available as an `AppImage` or `.deb` package.
+As the app is currently unsigned on macOS, you may need to **Right-Click >
+Open** or go to **System Settings > Privacy & Security** to allow the
+application to run.
 
 ## 🤝 Contributing
 
