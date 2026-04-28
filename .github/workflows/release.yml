@@ -78,9 +78,9 @@ jobs:
         with:
           name: ${{ matrix.os }}-package
           path: |
-            $GITHUB_WORKSPACE/windows-app.zip
-            $GITHUB_WORKSPACE/linux-app.tar.gz
-            $GITHUB_WORKSPACE/macos-app.zip
+            windows-app.zip
+            linux-app.tar.gz
+            macos-app.zip
           if-no-files-found: error
 
   release:
