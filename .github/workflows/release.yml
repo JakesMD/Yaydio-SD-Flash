@@ -1,0 +1,97 @@
+name: Desktop Release
+
+on:
+    push:
+        branches: [ main ]
+
+jobs:
+    get_version:
+        runs-on: ubuntu-latest
+        outputs:
+            version: ${{ steps.extract_version.outputs.version }}
+        steps:
+            - uses: actions/checkout@v4
+            - name: Extract version from pubspec.yaml
+              id: extract_version
+              run: |
+                  VERSION=$(grep 'version: ' pubspec.yaml | sed 's/version: //' | cut -d'+' -f1 | xargs)
+                  echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+    build:
+        needs: get_version
+        name: Build for ${{ matrix.os }}
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                os: [ windows-latest, ubuntu-latest, macos-latest ]
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Flutter
+              uses: subosito/flutter-action@v2
+              with:
+                  channel: "stable"
+                  cache: true
+
+            - name: Install Linux dependencies
+              if: matrix.os == 'ubuntu-latest'
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y ninja-build libgtk-3-dev liblzma-dev libstdc++6 pkg-config
+
+            - name: Install dependencies
+              run: flutter pub get
+
+            - name: Build desktop
+              run: |
+                  if [ "${{ matrix.os }}" = "windows-latest" ]; then
+                    flutter build windows --release
+                  elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+                    flutter build macos --release
+                  else
+                    flutter build linux --release
+                  fi
+              shell: bash
+
+            - name: Upload build artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: ${{ matrix.os }}-build
+                  path: |
+                      build/windows/x64/runner/Release/
+                      build/linux/x64/release/bundle/
+                      build/macos/Build/Products/Release/
+
+    release:
+        name: Create or update release
+        needs: [ get_version, build ]
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            - name: Download all artifacts
+              uses: actions/download-artifact@v4
+
+            - name: Package artifacts
+              run: |
+                  zip -r windows-app.zip windows-latest-build/
+                  tar -czvf linux-app.tar.gz ubuntu-latest-build/
+                  cd macos-latest-build/
+                  zip -ry ../macos-app.zip *.app
+
+            - name: Create or update release
+              uses: softprops/action-gh-release@v2
+              with:
+                  tag_name: v${{ needs.get_version.outputs.version }}
+                  name: Release v${{ needs.get_version.outputs.version }}
+                  body: "Automated build for version ${{ needs.get_version.outputs.version }}."
+                  draft: false
+                  prerelease: false
+                  files: |
+                      windows-app.zip
+                      linux-app.tar.gz
+                      macos-app.zip
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

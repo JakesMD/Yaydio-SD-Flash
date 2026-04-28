@@ -1,0 +1,38 @@
+name: yaydio_sd_flash
+description: A cross-platform desktop utility for preparing SD cards compatible with Yaydios and other hardware utilizing DY-XXXX sound modules. 
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  equatable: ^2.0.8
+  file_picker: ^11.0.2
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  hydrated_bloc: ^11.0.0
+  mallard: any
+  mallard_bloc: any
+  path: ^1.9.1
+  path_provider: ^2.1.5
+  super_drag_and_drop: ^0.9.1
+  uuid: ^4.5.3
+
+dev_dependencies:
+  flutter_launcher_icons: ^0.14.4
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^10.2.0
+
+flutter:
+  uses-material-design: true
+
+flutter_launcher_icons:
+  windows:
+    generate: true
+    image_path: "icon.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "icon.png"
